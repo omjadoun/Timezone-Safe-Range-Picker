@@ -1,3 +1,4 @@
+
 # Timezone-Safe Date & Time Range Picker
 
 A high-performance, accessible, and timezone-aware date/time range picker built from scratch with React, TypeScript, and Tailwind CSS.
@@ -64,3 +65,6 @@ To test the advanced DST logic:
 1. Set timezone to **New York**.
 2. **Spring Forward**: Go to March 8, 2026, and try to select 02:30 AM.
 3. **Fall Back**: Go to November 2, 2025, and select 01:30 AM to see the Choice Overlay.
+=======
+# Timezone-Safe-Range-Picker
+
