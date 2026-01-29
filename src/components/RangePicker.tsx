@@ -12,12 +12,16 @@ interface RangePickerProps {
     timezone?: Timezone;
     onTimezoneChange?: (tz: Timezone) => void;
     constraints?: Constraint;
+    isLoading?: boolean;
+    highContrast?: boolean;
 }
 
 export const RangePicker: React.FC<RangePickerProps> = ({
     timezone: externalTimezone,
     onTimezoneChange,
-    constraints
+    constraints,
+    isLoading = false,
+    highContrast = false
 }) => {
     const [internalTimezone, setInternalTimezone] = useState<Timezone>(() => {
         try {
@@ -42,21 +46,18 @@ export const RangePicker: React.FC<RangePickerProps> = ({
         setDstError
     } = useDateRange(undefined, constraints);
 
-    // Month navigation state
     const [viewMonth, setViewMonth] = useState(() => {
         const now = new Date();
         const parts = getDateParts(now, timezone);
         return { year: parts.year, month: parts.month };
     });
 
-    // Focus management
     const [focusedDate, setFocusedDate] = useState<Date | null>(() => {
         const now = new Date();
         const p = getDateParts(now, timezone);
         return createDateFromParts(p.year, p.month, 1, 12, 0, timezone);
     });
 
-    // State for ambiguous DST choice
     const [ambiguousInfo, setAmbiguousInfo] = useState<{
         options: Date[];
         mode: 'start' | 'end';
@@ -65,7 +66,6 @@ export const RangePicker: React.FC<RangePickerProps> = ({
 
     const containerRef = useRef<HTMLDivElement>(null);
 
-    // Handle click outside
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
             if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
@@ -142,15 +142,21 @@ export const RangePicker: React.FC<RangePickerProps> = ({
     };
 
     return (
-        <div className="relative inline-block text-left" ref={containerRef}>
+        <div className={`relative inline-block text-left ${highContrast ? 'high-contrast-mode' : ''}`} ref={containerRef}>
             <button
                 type="button"
-                onClick={() => setIsOpen(!isOpen)}
-                className="inline-flex items-center gap-3 px-4 py-2 border border-gray-300 rounded-brand shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all min-w-[320px]"
+                onClick={() => !isLoading && setIsOpen(!isOpen)}
+                disabled={isLoading}
+                className={`inline-flex items-center gap-3 px-4 py-2 border border-gray-300 rounded-brand shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-all min-w-[320px] ${isLoading ? 'opacity-50 cursor-not-allowed' : ''} ${highContrast ? 'border-2 border-black black text-black font-black' : ''}`}
                 aria-haspopup="grid"
                 aria-expanded={isOpen}
+                aria-busy={isLoading}
             >
-                <CalendarIcon className="w-4 h-4 text-gray-400" />
+                {isLoading ? (
+                    <div className="w-4 h-4 border-2 border-brand-500 border-t-transparent rounded-full animate-spin" />
+                ) : (
+                    <CalendarIcon className="w-4 h-4 text-gray-400" />
+                )}
                 <span className="flex-1 text-left flex items-center gap-2">
                     {range.start ? (
                         <span className="text-gray-900 font-semibold">
@@ -179,7 +185,6 @@ export const RangePicker: React.FC<RangePickerProps> = ({
                     role="dialog"
                     aria-label="Date and time range picker"
                 >
-                    {/* Header */}
                     <div className="flex items-center justify-between">
                         <button
                             onClick={() => changeMonth(-1)}
@@ -200,7 +205,6 @@ export const RangePicker: React.FC<RangePickerProps> = ({
                         </button>
                     </div>
 
-                    {/* Grid */}
                     <CalendarGrid
                         year={viewMonth.year}
                         month={viewMonth.month}
@@ -213,7 +217,6 @@ export const RangePicker: React.FC<RangePickerProps> = ({
 
                     <hr className="border-gray-100" />
 
-                    {/* Time & Timezone */}
                     <div className="grid grid-cols-2 gap-4">
                         <TimePicker
                             label="Start"
@@ -247,7 +250,6 @@ export const RangePicker: React.FC<RangePickerProps> = ({
                         />
                     </div>
 
-                    {/* Ambiguity Selection Overlay */}
                     {ambiguousInfo && (
                         <div className="absolute inset-0 bg-white/60 backdrop-blur-md rounded-2xl z-[100] flex items-center justify-center p-6 animate-in fade-in duration-300">
                             <div className="bg-white border-2 border-brand-500 rounded-brand p-6 shadow-2xl max-w-[280px] w-full animate-in zoom-in-95 duration-200">

@@ -69,3 +69,22 @@ export const KeyboardFlow: Story = {
         }
     }
 }
+
+export const Loading: Story = {
+    args: {
+        isLoading: true,
+    },
+};
+
+export const HighContrast: Story = {
+    args: {
+        highContrast: true,
+    },
+    parameters: {
+        docs: {
+            description: {
+                story: 'Demonstrates the High-contrast mode for accessibility.',
+            }
+        }
+    }
+}

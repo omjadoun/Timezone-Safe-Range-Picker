@@ -28,18 +28,15 @@ export const CalendarGrid: React.FC<CalendarGridProps> = ({
         const firstDay = getFirstDayOfMonth(year, month);
         const cells: (Date | null)[] = [];
 
-        // Padding for previous month
         for (let i = 0; i < firstDay; i++) {
             cells.push(null);
         }
 
-        // Current month days
         for (let i = 1; i <= daysInMonth; i++) {
             const date = createDateFromParts(year, month, i, 12, 0, timezone);
             cells.push(date);
         }
 
-        // Padding for next month to complete 6 rows (42 cells)
         while (cells.length < 42) {
             cells.push(null);
         }
