@@ -1,8 +1,9 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { axe } from 'vitest-axe';
-import { RangePicker } from '../RangePicker';
+import { RangePicker } from '../RangePicker/RangePicker';
+
 
 describe('RangePicker', () => {
     it('should render the picker trigger', () => {
